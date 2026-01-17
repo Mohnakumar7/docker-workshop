@@ -41,7 +41,8 @@ def run(
 ):
     prefix = "https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow"
     url = f"{prefix}/yellow_tripdata_{year}-{month:02d}.csv.gz"
-    engine = create_engine(f'postgresql://{pg_user}:{pg_pass}@{pg_host}:{pg_port}/{pg_db}')
+    engine = create_engine(
+        f'postgresql://{pg_user}:{pg_pass}@{pg_host}:{pg_port}/{pg_db}')
 
     df_iter = pd.read_csv(
         url,
@@ -54,10 +55,12 @@ def run(
     first = True
     for df_chunk in tqdm(df_iter):
         if first:
-            df_chunk.head(n=0).to_sql(name=target_table, con=engine, if_exists="replace")
+            df_chunk.head(n=0).to_sql(name=target_table,
+                                      con=engine, if_exists="replace")
             first = False
 
         df_chunk.to_sql(name=target_table, con=engine, if_exists="append")
+
 
 @click.command()
 @click.option("--year", default=2021, type=int, help="Year of the dataset")
@@ -85,3 +88,4 @@ def main(year, month, pg_user, pg_pass, pg_db, pg_host, pg_port, chunksize, targ
 
 if __name__ == '__main__':
     main()
+
